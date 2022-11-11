@@ -1,0 +1,20 @@
+{
+    "sql_addr": "debian-sys-maint:PudTheoZ3xi3X5LX@tcp(127.0.0.1:3306)/gva?charset=utf8",
+    "port": "8788",
+    "level": 3,
+    "run_interval": 60,
+    "template_button_code": "2",
+    "redis_addr": "127.0.0.1:6379",
+    "redis_db": 0,
+    "redis_prefix": "loan_marketing_",
+    "is_login": false,:q:wq
+    "sms": false,
+    "rpc_addr": "http://221.4.187.172:3456/rpc/v0",
+    "max_age": 86400,
+    "username": "debian-sys-maint",
+    "password": "PudTheoZ3xi3X5LX",
+    "path": "localhost",
+    "msql-port": "3306",
+    "db-name": "gva",
+    "config": "charset=utf8mb4&parseTime=True&loc=Local"
+}

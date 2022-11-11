@@ -1,0 +1,25 @@
+curl -X POST -H "Content-Type: application/json"
+--data '{ "jsonrpc": "2.0", "method": "titan.GetDevicesInfo",
+"params": ["e_ff8f7733511411ed889b86f108eb4c09"], "id": 3}'
+ http://192.168.0.73:3456/rpc/v0
+ 221.4.187.172
+INSERT into `devices_info` (`device_id`,`user_id`) values ('c_51ccf75d537c11ed8c71fa188072bc00','f1svzkg3tw4pbznlqee7jk4bv5aefkbepwztzd6bq');
+INSERT into `devices_info` (`device_id`,`user_id`) values ('c_591ac742537c11ed8c71fa188072bc00','f1svzkg3tw4pbznlqee7jk4bv5aefkbepwztzd6bq');
+INSERT into `devices_info` (`device_id`,`user_id`) values ('c_5c87b2a2537c11ed8c71fa188072bc00','f1svzkg3tw4pbznlqee7jk4bv5aefkbepwztzd6bq');
+INSERT into `devices_info` (`device_id`,`user_id`) values ('c_681995c050f511eda61ffa188072bc00','f1svzkg3tw4pbznlqee7jk4bv5aefkbepwztzd6bq');
+INSERT into `devices_info` (`device_id`,`user_id`) values ('c_5a297610537c11ed8c71fa188072bc00','f1svzkg3tw4pbznlqee7jk4bv5aefkbepwztzd6bq');
+INSERT into `devices_info` (`device_id`,`user_id`) values ('e_0da2485e538b11ed8c71fa188072bc00','f1svzkg3tw4pbznlqee7jk4bv5aefkbepwztzd6bq');
+INSERT into `devices_info` (`device_id`,`user_id`) values ('e_0a2c81f2538b11ed8c71fa188072bc00','f1svzkg3tw4pbznlqee7jk4bv5aefkbepwztzd6bq');
+INSERT into `devices_info` (`device_id`,`user_id`) values ('e_646fdc8e50f511eda61ffa188072bc00','f1svzkg3tw4pbznlqee7jk4bv5aefkbepwztzd6bq');
+INSERT into `devices_info` (`device_id`,`user_id`) values ('e_0c6256f8538b11ed8c71fa188072bc00','f1svzkg3tw4pbznlqee7jk4bv5aefkbepwztzd6bq');
+INSERT into `devices_info` (`device_id`,`user_id`) values ('e_0b1154b0538b11ed8c71fa188072bc00','f1svzkg3tw4pbznlqee7jk4bv5aefkbepwztzd6bq');
+INSERT into `devices_info` (`device_id`,`user_id`) values ('e_eed4f4b7538a11ed8c71fa188072bc00','f1svzkg3tw4pbznlqee7jk4bv5aefkbepwztzd6bq');
+INSERT into `devices_info` (`device_id`,`user_id`) values ('e_0d0742c4538b11ed8c71fa188072bc00','f1svzkg3tw4pbznlqee7jk4bv5aefkbepwztzd6bq');
+INSERT into `devices_info` (`device_id`,`user_id`) values ('e_f1bed188538a11ed8c71fa188072bc00','f1svzkg3tw4pbznlqee7jk4bv5aefkbepwztzd6bq');
+INSERT into `devices_info` (`device_id`,`user_id`) values ('e_f2bd43a0538a11ed8c71fa188072bc00','f1svzkg3tw4pbznlqee7jk4bv5aefkbepwztzd6bq');
+INSERT into `devices_info` (`device_id`,`user_id`) values ('e_0bb9bcb7538b11ed8c71fa188072bc00','f1svzkg3tw4pbznlqee7jk4bv5aefkbepwztzd6bq');
+ curl -X POST -H "Content-Type: application/json" --data '{ "jsonrpc": "2.0", "method": "titan.GetDevicesInfo","params": ["e_0a2c81f2538b11ed8c71fa188072bc00"], "id": 3}' http://172.24.100.42:3456/rpc/v0
+
+ map[id:3 jsonrpc:2.0 result:[map[blockCid:08b40524-ee41-46e9-a03d-cb0e478125bd blockSize:1.048576e+06 createdAt:2022-11-03T17:16:36Z deviceId:e_ff8f7733511411ed889b86f108eb4c09 reward:1 speed:114] map[blockCid:bc24ec1a-218e-4fdb-be9
+ f-f946a8cba3e4 blockSize:1.048576e+06 createdAt:2022-11-03T17:16:35Z deviceId:e_ff8f7733511411ed889b86f108eb4c09 reward:1 speed:161] map[blockCid:21fb9249-7fa6-4019-82eb-d3284bc6edfc blockSize:1.048576e+06 createdAt:2022-11-03T17:16
+ :34Z deviceId:e_ff8f7733511411ed889b86f108eb4c09 reward:1 speed:165]]]

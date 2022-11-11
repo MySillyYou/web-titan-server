@@ -1,0 +1,20 @@
+{"code":0,
+  "data": {
+    "cumulative_profit":1047,
+    "yesterday_profit":1903,
+    "today_profit":1902,
+    "seven_days_profit":3507,
+    "month_profit":80084,
+    "total_num":15,
+    "online_num":10,
+    "offline_num":5,
+    "abnormal_num":0,
+    "total_bandwidth":6417285120,
+    "daily_income": {
+      "10-29":1029,
+      "10-30":58,
+      "10-31":65,
+      "11-01":2573
+    }
+  },
+  "msg":""}
