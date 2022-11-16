@@ -41,8 +41,9 @@ func loadConfig(path string) (map[string]interface{}, error) {
 }
 
 func httpRoute() {
-
+	// 权限验证功能
 	handler.RegisterInterface()
+	// Titan 管理后台页面路由
 	http.HandleFunc("/api/get_miner_info", handler.GetAllMinerInfo)
 	http.HandleFunc("/api/get_retrieval", handler.Retrieval)
 	http.HandleFunc("/api/get_user_device_info", handler.GetUserDeviceInfo)
@@ -64,27 +65,16 @@ func httpRoute() {
 	http.HandleFunc("/api/get_task_list", handler.GetTaskList)
 	http.HandleFunc("/api/get_task_detail", handler.GetTaskListDetail)
 
-	//操作流程记录
-	http.HandleFunc("/onMobEventStart", handler.StartActFlow)
-
-	//handler.RegisterAuthHandler("/admin/regist_query_inner", handler.QueryInnerRegisterList)
-	//点击统计
-	//handler.RegisterAuthHandler("/admin/query_total_data", handler.GetTotalData)
-	//handler.RegisterAuthHandler("/admin/query_total_data", handler.GetTotalDataa)
-	//handler.RegisterAuthHandler("/admin/query_detail_data", handler.GetDetailData)
-	//handler.RegisterAuthHandler("/admin/query_inner_data", handler.GetInnerRegistData)
-	//handler.RegisterAuthHandler("/admin/query_upload_data", handler.GetUploadData)
-
+	// 以下路由功能待定
+	// 根据用户请求获取所属地址
+	http.HandleFunc("/ts", handler.GetSomeInitials)
 	http.Handle("/", http.FileServer(http.Dir("../static")))
-	http.Handle("/banner/", http.StripPrefix("/banner/", http.FileServer(http.Dir("../static/banner"))))
+	// 静态文件展示
+	http.Handle("/banner/", http.StripPrefix("/banner/", http.FileServer(http.Dir("static/banner"))))
+	// 提供软件下载
 	http.Handle("/app_apk/", http.StripPrefix("/app_apk/", http.FileServer(http.Dir("../static/app_apk"))))
-	http.Handle("/mipmap-xxxhdpi/", http.StripPrefix("/mipmap-xxxhdpi/", http.FileServer(http.Dir("../static/logo/mipmap-xxxhdpi"))))
-	http.Handle("/banner_xxxhdpi/", http.StripPrefix("/banner_xxxhdpi/", http.FileServer(http.Dir("../static/logo/banner_xxxhdpi"))))
-	//http.Handle("/admin/", http.StripPrefix("/admin/", http.FileServer(http.Dir("../static/dist"))))
+	// 路由定向
 	http.Handle("/dist/", http.StripPrefix("/dist/", http.FileServer(http.Dir("../static"))))
-	//http.Handle("/dist/", http.StripPrefix("/dist/", http.FileServer(http.Dir("../static/dist"))))
-	//图片路径
-	//http.Handle("/banner_slices/mipmap-hdpi/2000-banner.png", http.StripPrefix("/banner_slices/mipmap-hdpi/", http.FileServer(http.Dir("../banner_slices/mipmap-hdpi/"))))
 }
 
 var (
@@ -109,13 +99,7 @@ func main() {
 	handler.NewGormMysqlDB("", "Mysql")
 	handler.RpcAddr = config["rpc_addr"].(string)
 	Init()
-	//handler.Conn, err = jsonrpc.Dial("tcp", rpcAddr)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-
 	httpRoute()
-
 	stop()
 	srv := startHttpServer()
 
@@ -134,7 +118,7 @@ func main() {
 }
 
 func Init() {
-
+	// 此处可配置权限路由（未开放）
 	authConfig, err := loadConfig("./conf/auth_menu.json")
 	if err != nil {
 		log.Fatal(err.Error())
@@ -170,7 +154,7 @@ func startHttpServer() *http.Server {
 }
 
 func stop() {
-
+	// 监听系统停止信号
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	go func() {

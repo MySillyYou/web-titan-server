@@ -25,8 +25,7 @@ type IndexRequest struct {
 	UserId string
 }
 
-// structure of index info
-// structure of index info
+// IndexPageRes structure of index info
 type IndexPageRes struct {
 	// AllMinerNum MinerInfo
 	AllMinerInfo
@@ -96,7 +95,7 @@ type PageInfo struct {
 	UserIp   string `json:"userIp" form:"userIp"`     // user ip address
 }
 
-// Retrieval miner info
+// RetrievalInfo  miner info
 type RetrievalInfo struct {
 	ServiceCountry string  `json:"service_country"` // 服务商国家
 	ServiceStatus  string  `json:"service_status"`  // 服务商网络状态
@@ -111,7 +110,7 @@ type RetrievalInfo struct {
 	DownloadUrl    string  `json:"download_url"`    // 下载地址
 }
 
-// Response data of Retrieval miner info
+// RetrievalPageRes Response data of Retrieval miner info
 type RetrievalPageRes struct {
 	List []TaskInfo `json:"list"`
 	AllMinerInfo
@@ -122,24 +121,27 @@ type DevicesSearch struct {
 	DevicesInfo
 	PageInfo
 }
+
 type GVAModel struct {
 	ID        uint           `gorm:"primarykey"`                     // 主键ID
 	CreatedAt time.Time      `gorm:"comment:'创建时间';type:timestamp;"` // 创建时间
 	UpdatedAt time.Time      `gorm:"comment:'更新时间';type:timestamp;"` // 更新时间
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`                 // 删除时间
 }
+
 type RpcDevice struct {
 	JsonRpc string      `json:"jsonrpc"`
 	Id      int         `json:"id"`
 	Result  DevicesInfo `json:"result"`
 }
+
 type RpcTask struct {
 	JsonRpc string            `json:"jsonrpc"`
 	Id      int               `json:"id"`
 	Result  []TaskDataFromRpc `json:"result"`
 }
 
-// Devices Info
+// DevicesInfo Devices Info
 type DevicesInfo struct {
 	GVAModel
 	// 设备id
@@ -213,6 +215,7 @@ type DevicesInfo struct {
 	BandwidthUp     float64 `json:"bandwidth_up" form:"bandwidth_up" gorm:"column:bandwidth_up;comment:;"`                // 上行带宽B/s
 	BandwidthDown   float64 `json:"bandwidth_down" form:"bandwidth_down" gorm:"column:bandwidth_down;comment:;"`          // 下行带宽B/s
 }
+
 type EData struct {
 	// 今日在线时长
 	TodayOnlineTime string `json:"todayOnlineTime" form:"todayOnlineTime" gorm:"column:today_online_time;comment:;"`
@@ -425,7 +428,7 @@ type TaskDataFromRpc struct {
 	// 期望完成时间
 	TimeNeed string `json:"time_need" form:"timeNeed" gorm:"column:time_need;comment:;"`
 	// 完成时间
-	TimeDone time.Time `json:"timeDone" form:"time" gorm:"column:time;comment:;"`
+	TimeDone time.Time `json:"createdAt" form:"time" gorm:"column:time;comment:;"`
 	// 服务商国家
 	ServiceCountry string `json:"serviceCountry" form:"serviceCountry" gorm:"column:service_country;comment:;"`
 	// 地区

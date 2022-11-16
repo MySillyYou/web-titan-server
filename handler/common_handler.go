@@ -8,7 +8,6 @@ import (
 	"net/rpc"
 	"reflect"
 	"strconv"
-	"strings"
 	"time"
 	log "web-server/alog"
 )
@@ -19,6 +18,7 @@ const (
 	KRoleInside  = "2" //内部人员
 	KRoleOutside = "3" //外部人员
 )
+
 const (
 	KAddNew = "1" //新建
 	KModify = "2" //修改
@@ -41,28 +41,25 @@ const (
 )
 
 var KErrorMsg = map[int]string{
-	KErrorSucc:          "",
-	KErrorServer:        "服务器异常",
-	KErrorNoSource:      "通路不存在",
-	KErrorArgs:          "参数错误",
-	KErrorNoArg:         "缺少参数",
-	KErrorProductRepeat: "小贷名称不能重复",
-	KErrorExistSrc:      "通路已存在",
-	KErrorUserNotExist:  "用户不存在",
-	KErrorSectionRepeat: "扣量区间重合",
+	KErrorSucc:         "",
+	KErrorServer:       "服务器异常",
+	KErrorNoSource:     "通路不存在",
+	KErrorArgs:         "参数错误",
+	KErrorNoArg:        "缺少参数",
+	KErrorUserNotExist: "用户不存在",
 }
 
 const (
-	// 年月
+	// TimeFormatYM 年月
 	TimeFormatYM = "2006-01"
 
-	//年月日
+	// TimeFormatYMD 年月日
 	TimeFormatYMD = "2006-01-02"
 	TimeFormatMD  = "01-02"
 	TimeFormatHM  = "15:04"
 	TimeFormatM   = "04"
 
-	//年月日时分秒
+	// TimeFormatYMDHMS 年月日时分秒
 	TimeFormatYMDHMS = "2006-01-02 15:04:05"
 )
 
@@ -103,21 +100,7 @@ func HandleBack(w http.ResponseWriter, code int, msg string, dataString interfac
 	w.Write(byteJson)
 }
 
-func getAuthChannelsCond(r *http.Request) string {
-	if r.FormValue("role") == KRoleAdmin {
-		return "true"
-	}
-	opChannels := r.FormValue("channels")
-	if opChannels == "" {
-		return "false"
-	}
-
-	tempList := strings.Split(opChannels, ",")
-	ret := fmt.Sprintf("channel in ('%s')", strings.Join(tempList, "','"))
-	return ret
-}
-
-func MakeXslxFileWithFieldNamesFromMapList(fieldNames []string, fields []string, contents []map[string]string) (*xlsx.File, error) {
+func MakeXslFileWithFieldNamesFromMapList(fieldNames []string, fields []string, contents []map[string]string) (*xlsx.File, error) {
 	file := xlsx.NewFile()
 	sheet, err := file.AddSheet("sheet1")
 	if err != nil {
@@ -222,7 +205,7 @@ func compareDate(firstDate, secondDate string) int {
 	return 0
 }
 
-// int64 2 string
+// Int64ToString int64 2 string
 func Int64ToString(arg int64) string {
 	return strconv.FormatInt(arg, 10)
 }
@@ -253,4 +236,40 @@ func StrToFloat(str string) float64 {
 		return float64(0)
 	}
 	return v
+}
+
+// getYearMonthToDay 查询指定年份指定月份有多少天
+// @params year int 指定年份
+// @params month int 指定月份
+func getYearMonthToDay(year int, month int) int {
+	// 有31天的月份
+	day31 := map[int]struct{}{
+		1:  {},
+		3:  {},
+		5:  {},
+		7:  {},
+		8:  {},
+		10: {},
+		12: {},
+	}
+	if _, ok := day31[month]; ok {
+		return 31
+	}
+	// 有30天的月份
+	day30 := map[int]struct{}{
+		4:  {},
+		6:  {},
+		9:  {},
+		11: {},
+	}
+	if _, ok := day30[month]; ok {
+		return 30
+	}
+	// 计算是平年还是闰年
+	if (year%4 == 0 && year%100 != 0) || year%400 == 0 {
+		// 得出2月的天数
+		return 29
+	}
+	// 得出2月的天数
+	return 28
 }

@@ -1,13 +1,13 @@
 package utils
 
 import (
-	log "web-server/alog"
-	httpLib "web-server/http"
-	redisLib "web-server/redis"
 	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
+	log "web-server/alog"
+	httpLib "web-server/http"
+	redisLib "web-server/redis"
 )
 
 // 聚合数据二要素(手机号码绑定身份证号和姓名校验)验证AppKey, 文档地址: https://www.juhe.cn/docs/api/id/251
@@ -73,9 +73,9 @@ const (
 	KWanshuCacheDay = 30         // 万数三要素缓存天数
 )
 
-//INFO : 2018/12/12 15:20:50 WanshuThreeKeyElements params[map[idNum:360681199401136130 mobile:17620163567 appId:bLxTnZu9 appKey:wx8NajUu name:夏笑声]] resp[{"chargeStatus":1,"message":"成功","data":{"orderNo":"6668677421942108","handleTime":"2018-12-12 15:20:50","type":"2","result":"01","gender":"1","age":"25","remark":"一致"},"code":"200000"}] error[<nil>]
+// INFO : 2018/12/12 15:20:50 WanshuThreeKeyElements params[map[idNum:360681199401136130 mobile:17620163567 appId:bLxTnZu9 appKey:wx8NajUu name:夏笑声]] resp[{"chargeStatus":1,"message":"成功","data":{"orderNo":"6668677421942108","handleTime":"2018-12-12 15:20:50","type":"2","result":"01","gender":"1","age":"25","remark":"一致"},"code":"200000"}] error[<nil>]
 // 万数三要素接口
-func WanshuThreeKeyElements(username, mobile, idcard string, redis *redisLib.RedisUtil) bool {
+func WanshuThreeKeyElements(username, mobile, idcard string, redis *redisLib.Util) bool {
 	params := map[string]string{"appId": KWanshuAppID, "appKey": KWanshuAppKey, "name": username, "idNum": idcard, "mobile": mobile}
 
 	if redis != nil {
@@ -124,7 +124,7 @@ func WanshuThreeKeyElements(username, mobile, idcard string, redis *redisLib.Red
 
 // 万数三要素接口, 增加可传入通路的配置
 // params 可传入通路等参数便于进行日志统计
-func WanshuTriElementCheck(username, mobile, idcard string, redis *redisLib.RedisUtil, args map[string]string) bool {
+func WanshuTriElementCheck(username, mobile, idcard string, redis *redisLib.Util, args map[string]string) bool {
 	params := map[string]string{"appId": KWanshuAppID, "appKey": KWanshuAppKey, "name": username, "idNum": idcard, "mobile": mobile}
 
 	if redis != nil {

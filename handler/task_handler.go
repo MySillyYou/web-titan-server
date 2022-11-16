@@ -86,7 +86,7 @@ func GetTaskList(w http.ResponseWriter, r *http.Request) {
 		HandleError(w, "缺少参数")
 		return
 	}
-	sqlClause := fmt.Sprintf("select date_format(created_at, '%%Y-%%m-%%d') as date, count(1) as num, sum(file_size) as file_size,sum(price) as price from task_info "+
+	sqlClause := fmt.Sprintf("select date_format(time, '%%Y-%%m-%%d') as date, count(1) as num, sum(file_size) as file_size,sum(price) as price from task_info "+
 		"where device_id='%s' and status in ('已完成','已连接') group by date", TaskInfoSearch.DeviceId)
 	fmt.Println(sqlClause)
 	datas, err := mql.GetSQLHelper().GetQueryDataList(sqlClause)
@@ -127,8 +127,8 @@ func GetTaskListDetail(w http.ResponseWriter, r *http.Request) {
 		beginTime = date + " 00:00:00"
 		endTime = date + " 23:59:59"
 	}
-	sqlClause := fmt.Sprintf("select date_format(created_at, '%%Y-%%m-%%d') as date,cid,file_name,file_size,bandwidth_up,bandwidth_down,ip_address,created_at,status from task_info "+
-		"where device_id='%s' and status in ('已完成','已连接') and created_at>='%s' and  created_at<='%s'", TaskInfoSearch.DeviceId, beginTime, endTime)
+	sqlClause := fmt.Sprintf("select date_format(time, '%%Y-%%m-%%d') as date,cid,file_name,file_size,bandwidth_up,bandwidth_down,ip_address,created_at,status from task_info "+
+		"where device_id='%s' and status in ('已完成','已连接') and time>='%s' and  time<='%s'", TaskInfoSearch.DeviceId, beginTime, endTime)
 	fmt.Println(sqlClause)
 	datas, err := mql.GetSQLHelper().GetQueryDataList(sqlClause)
 	if err != nil {
@@ -139,16 +139,15 @@ func GetTaskListDetail(w http.ResponseWriter, r *http.Request) {
 	sqlClause = fmt.Sprintf("select count(1) as num from task_info "+
 		"where device_id='%s' and status in ('已完成','已连接') and created_at>='%s' and  created_at<='%s'", TaskInfoSearch.DeviceId, beginTime, endTime)
 	fmt.Println(sqlClause)
-	count_all, err := mql.GetSQLHelper().GetQueryDataList(sqlClause)
+	countAll, err := mql.GetSQLHelper().GetQueryDataList(sqlClause)
 	if err != nil {
 		log.Errorf("QueryClickData error[%v] sqlClause[%s]", err, sqlClause)
 		HandleCodeMsg(w, KErrorServer, KErrorMsg[KErrorServer])
 		return
 	}
 	resp := make(map[string]interface{})
-	resp["tot_num"] = count_all
+	resp["tot_num"] = countAll
 	resp["data_list"] = datas
-	fmt.Println(datas)
 	HandleSuccess(w, resp)
 }
 
@@ -157,7 +156,7 @@ type TaskSearch struct {
 	PageInfo
 }
 
-// DevicesInfo search from mysql
+// GetTaskInfoList  search from mysql
 func GetTaskInfoList(info TaskSearch) (list []TaskInfo, total int64, err error) {
 	// string转成int：
 	limit, _ := strconv.Atoi(info.PageSize)

@@ -45,6 +45,7 @@ CREATE TABLE `task_info` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
 DROP TABLE IF EXISTS `income_daily_r`;
 CREATE TABLE `income_daily_r`  (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,

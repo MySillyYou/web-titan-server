@@ -1,7 +1,7 @@
 package handler
 
 import (
-"fmt"
+	"fmt"
 	_ "gorm.io/gorm"
 )
 
@@ -12,7 +12,6 @@ type MysqlDb interface {
 
 var mysqlDb MysqlDb
 
-// NewCacheDB New Cache DB
 func NewGormMysqlDB(url string, dbType string) {
 	var err error
 

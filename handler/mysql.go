@@ -26,7 +26,7 @@ func TypeMysql() string {
 // GeneralDB 也被 Pgsql 和 Mysql 原样使用
 type GeneralDB struct {
 	Path         string `mapstructure:"path" json:"path" yaml:"path"`                               // 服务器地址:端口
-	Port         string `mapstructure:"port" json:"msql-port" yaml:"msql-port"`                               //:端口
+	Port         string `mapstructure:"port" json:"msql-port" yaml:"msql-port"`                     //:端口
 	Config       string `mapstructure:"config" json:"config" yaml:"config"`                         // 高级配置
 	Dbname       string `mapstructure:"db-name" json:"db-name" yaml:"db-name"`                      // 数据库名
 	Username     string `mapstructure:"username" json:"username" yaml:"username"`                   // 数据库用户名
@@ -48,7 +48,7 @@ func (m *GeneralDB) GetLogMode() string {
 	return m.LogMode
 }
 
-// DevicesInfo search from mysql
+// GetDevicesInfoList  search from mysql
 func (m mysqlDB) GetDevicesInfoList(info DevicesSearch) (list []DevicesInfo, total int64, err error) {
 	// string转成int：
 	limit, _ := strconv.Atoi(info.PageSize)
@@ -76,21 +76,6 @@ func (m mysqlDB) GetDevicesInfoList(info DevicesSearch) (list []DevicesInfo, tot
 	err = db.Limit(limit).Offset(offset).Find(&InPages).Error
 	return InPages, total, err
 }
-
-//func (m mysqlDB) SaveDailyInfo(incomeDaily IncomeDaily) error {
-//	var incomeDailyOld IncomeDaily
-//	result := GMysqlDb.Where("device_id = ?", incomeDaily.DeviceId).Where("user_id = ?", incomeDaily.UserId).
-//		First(&incomeDailyOld)
-//	incomeDailyOld.DeviceId = incomeDaily.DeviceId
-//	incomeDailyOld.UserId = incomeDaily.UserId
-//	if result.RowsAffected <= 0 {
-//		err := GMysqlDb.Create(&incomeDailyOld).Error
-//		return err
-//	} else {
-//		err := GMysqlDb.Save(&incomeDailyOld).Error
-//		return err
-//	}
-//}
 
 func (m mysqlDB) SaveDeviceInfo(incomeDaily DevicesSearch) error {
 	var incomeDailyOld IncomeDaily

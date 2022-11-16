@@ -2,7 +2,6 @@ package utils
 
 import (
 	"bytes"
-	log "web-server/alog"
 	"compress/gzip"
 	"crypto/tls"
 	"encoding/json"
@@ -15,6 +14,7 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	log "web-server/alog"
 )
 
 type HttpUtils struct {
@@ -59,7 +59,7 @@ func (this *HttpUtils) SetHttps() {
 	this.Client.Transport = tr
 }
 
-// 设置超时时间(单位: 秒)
+// SetTimeout 设置超时时间(单位: 秒)
 func (this *HttpUtils) SetTimeout(timeout int64) {
 	this.Client.Timeout = time.Duration(timeout) * time.Second
 }
@@ -102,7 +102,7 @@ func (this *HttpUtils) SetProxy(proxyAddr string) error {
 			return conn, nil
 		},
 		ResponseHeaderTimeout: time.Second * TIMEOUT,
-		Proxy: http.ProxyURL(proxy),
+		Proxy:                 http.ProxyURL(proxy),
 	}
 
 	this.Client.Transport = tr
@@ -128,7 +128,7 @@ func (this *HttpUtils) SetProxyNos(proxyAddr string) error {
 			return conn, nil
 		},
 		ResponseHeaderTimeout: time.Second * TIMEOUT,
-		Proxy: http.ProxyURL(proxy),
+		Proxy:                 http.ProxyURL(proxy),
 	}
 
 	this.Client.Transport = tr
@@ -892,7 +892,7 @@ func (this *HttpUtils) GetParam(param map[string]string) string {
 	return buf.String()
 }
 
-//合并参数
+// MergeParam 合并参数
 func (this *HttpUtils) MergeParam(a ...map[string]string) map[string]string {
 	b := make(map[string]string)
 	for _, m := range a {
@@ -906,7 +906,7 @@ func (this *HttpUtils) MergeParam(a ...map[string]string) map[string]string {
 	return b
 }
 
-//url encode
+// EscapeParam url encode
 func (this *HttpUtils) EscapeParam(params map[string]string) map[string]string {
 	newMap := make(map[string]string)
 	for k, v := range params {

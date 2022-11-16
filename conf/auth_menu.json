@@ -1,10 +1,5 @@
 {
     "fields": {
-        "1001": "小贷管理",
-        "1002": "页面模板",
-        "1003": "链接管理",
-        "1004": "点击数据查询",
-        "1005": "扣量设置",
         "1006": "注册查询",
         "1007": "注册查询(内部)",
         "1008": "总量查询",
@@ -14,30 +9,11 @@
     },
     "auth_menus": {
         "/admin/add_product": "1001,1002,1003",
-        "/admin/get_product_list": "1001,1002,1003",
-        "/admin/get_api_info": "1001,1002,1003",
-        "/admin/upload_file": "1001,1002,1003",
-        "/admin/add_template": "1001,1002,1003",
-        "/admin/get_template_list": "1001,1002,1003",
-        "/admin/get_page_list":"1001,1002,1003" ,
-        "/admin/add_links": "1001,1002,1003",
-        "/admin/get_link_list": "1001,1002,1003",
-        "/admin/query_click_data": "1004",
-        "/admin/discount_conf_list": "1005",
-        "/admin/get_channel_list": "1003,1004,1005,1006,1007,1008",
-        "/admin/set_discount_conf": "1005",
-        "/admin/template_button": "1002",
-        "/admin/query_outer_data": "1006",
-        "/admin/query_inner_data": "1007",
-        "/admin/query_detail_data": "1004",
-        "/admin/query_total_data": "1008",
-        "/admin/query_upload_data": "1009",
-        "/admin/upload_wecode_file": "1010"
-
+        "/admin/get_product_list": "1001,1002,1003"
     },
     "role_auth": {
-        "1": "1001,1002,1003,1004,1005,1006,1007,1008,1009,1010",
-        "2": "1001,1002,1003,1004,1005,1006,1007",
+        "1": "1006,1007,1008,1009,1010",
+        "2": "1006,1007",
         "3": "1006"
     }
 }

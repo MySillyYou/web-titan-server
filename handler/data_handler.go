@@ -2,10 +2,8 @@ package handler
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/linguohua/titan/api/client"
 	"io/ioutil"
 	"net/http"
 	"sync"
@@ -16,20 +14,6 @@ import (
 
 var AllM AllMinerInfo
 
-// rpc demo
-func ClientRun() {
-	url := "http://192.168.0.177:3456/rpc/v0"
-	ctx := context.Background()
-	apiScheduler, closer, err := client.NewScheduler(ctx, url, nil)
-
-	defer closer()
-	v, err := apiScheduler.FindNodeWithBlock(ctx, "QmeUqw4FY1wqnh2FMvuc2v8KAapE7fYwu2Up4qNwhZiRk7", "119.28.56.202")
-	if err != nil {
-		print("sss")
-	}
-	a := fmt.Sprintf("%s", v)
-	fmt.Println(a)
-}
 func (t *DeviceTask) DeviceInfoGetFromRpc(DeviceId string) (DeviceInfo DevicesInfo, err error) {
 	var data RpcDevice
 	song := make(map[string]interface{})
@@ -37,7 +21,6 @@ func (t *DeviceTask) DeviceInfoGetFromRpc(DeviceId string) (DeviceInfo DevicesIn
 	song["method"] = "titan.GetDevicesInfo"
 	song["id"] = 3
 	song["params"] = []string{DeviceId}
-	//song["params"] = []string{"e_ff8f7733511411ed889b86f108eb4c09"}
 	bytesData, err := json.Marshal(song)
 	if err != nil {
 		return
@@ -50,7 +33,6 @@ func (t *DeviceTask) DeviceInfoGetFromRpc(DeviceId string) (DeviceInfo DevicesIn
 	}
 	request.Header.Set("Content-Type", "application/json;charset=UTF-8")
 	client := http.Client{}
-	//defer client.CloseIdleConnections()
 	resp, err := client.Do(request)
 	if err != nil {
 		log.Error(err.Error())
@@ -102,13 +84,11 @@ func CidInfoGetFromRpc(DeviceId string) error {
 	song["method"] = "titan.GetDownloadInfo"
 	song["id"] = 3
 	song["params"] = []string{DeviceId}
-	//song["params"] = []string{"e_ff8f7733511411ed889b86f108eb4c09"}
 	bytesData, err := json.Marshal(song)
 	if err != nil {
 		return err
 	}
 	reader := bytes.NewReader(bytesData)
-	//request, err := http.NewRequest("POST", "http://192.168.0.73:3456/rpc/v0", reader)
 	request, err := http.NewRequest("POST", RpcAddr, reader)
 	if err != nil {
 		log.Error(err.Error())
@@ -116,7 +96,6 @@ func CidInfoGetFromRpc(DeviceId string) error {
 	}
 	request.Header.Set("Content-Type", "application/json;charset=UTF-8")
 	client := http.Client{}
-	//defer client.CloseIdleConnections()
 	resp, err := client.Do(request)
 	if err != nil {
 		log.Error(err.Error())
@@ -145,7 +124,9 @@ func CidInfoGetFromRpc(DeviceId string) error {
 			dataSave.DeviceId = taskOne.DeviceId
 			dataSave.FileSize = taskOne.FileSize
 			dataSave.Price = taskOne.Reward
+			dataSave.TimeDone = taskOne.TimeDone
 			dataSave.BandwidthUp = taskOne.BandwidthUp
+			dataSave.Status = "已完成"
 			err = SaveTaskInfo(dataSave)
 			if err != nil {
 				log.Error(err.Error())
@@ -163,7 +144,6 @@ func AllMinerInfoGetFromRpc() {
 	song["method"] = "titan.StateNetwork"
 	song["id"] = 3
 	song["params"] = []string{}
-	//song["params"] = []string{"e_ff8f7733511411ed889b86f108eb4c09"}
 	bytesData, err := json.Marshal(song)
 	if err != nil {
 		return
@@ -202,30 +182,6 @@ func AllMinerInfoGetFromRpc() {
 	return
 }
 
-// device data save
-
-//  daily data save
-
-func SetDailyInfo(jsonStr, date, income string) string {
-	onlineJsonDailyFrom := make(map[string]interface{})
-	if jsonStr != "" {
-		e := json.Unmarshal([]byte(jsonStr), &onlineJsonDailyFrom)
-		if e != nil {
-			return ""
-		}
-	}
-	if income == "" {
-		income = "0"
-	}
-	onlineJsonDailyFrom[date] = Str2Float64(income)
-	bytes, e := json.Marshal(onlineJsonDailyFrom)
-	if e != nil {
-		return ""
-	}
-	jsonString := string(bytes)
-	return jsonString
-}
-
 func (t *DeviceTask) SaveDeviceInfo(Df string) error {
 	data, err := t.DeviceInfoGetFromRpc(Df)
 	if err != nil {
@@ -252,10 +208,7 @@ func (t *DeviceTask) SaveDeviceInfo(Df string) error {
 		}
 	} else {
 		data.ID = DeviceInfoOld.ID
-		//data.UserId = DeviceInfoOld.UserId
-		//data.CreatedAt = DeviceInfoOld.CreatedAt
 		data.UpdatedAt = time.Now()
-		//err := GMysqlDb.Save(&data).Error
 		err := GMysqlDb.Updates(&data).Error
 		if err != nil {
 			log.Error(err.Error())
@@ -267,19 +220,13 @@ func (t *DeviceTask) SaveDeviceInfo(Df string) error {
 }
 
 func SaveTaskInfo(data TaskInfo) error {
-	//data, err := CidInfoGetFromRpc("e_ff8f7733511411ed889b86f108eb4c09")
-	//if err != nil {
-	//	log.Error(err.Error())
-	//	return err
-	//}
 	if data.DeviceId == "" {
 		log.Println("接受空数据", data)
 		return nil
 	}
 
 	var DeviceInfoOld TaskInfo
-	data.TimeDone = time.Now()
-	result := GMysqlDb.Where("device_id = ?", data.DeviceId).Where("cid = ?", data.Cid).First(&DeviceInfoOld)
+	result := GMysqlDb.Where("device_id = ?", data.DeviceId).Where("cid = ?", data.Cid).Where("time = ?", data.TimeDone).First(&DeviceInfoOld)
 	if result.RowsAffected <= 0 {
 		data.CreatedAt = time.Now()
 		err := GMysqlDb.Create(&data).Error
@@ -289,10 +236,7 @@ func SaveTaskInfo(data TaskInfo) error {
 		}
 	} else {
 		data.ID = DeviceInfoOld.ID
-		//data.UserId = DeviceInfoOld.UserId
-		//data.CreatedAt = DeviceInfoOld.CreatedAt
 		data.UpdatedAt = time.Now()
-		//err := GMysqlDb.Save(&data).Error
 		err := GMysqlDb.Updates(&data).Error
 		if err != nil {
 			log.Error(err.Error())
@@ -320,9 +264,6 @@ func TransferData(daily IncomeDaily) error {
 		}
 	} else {
 		daily.ID = dailyOld.ID
-		//data.UserId = DeviceInfoOld.UserId
-
-		//err := GMysqlDb.Save(&data).Error
 		err := GMysqlDb.Updates(&daily).Error
 		if err != nil {
 			log.Error(err.Error())
@@ -398,12 +339,12 @@ func (t *DeviceTask) CountDataByUser(userId string) {
 	DateTo := timeBase + " 23:59:59"
 	sqlClause := fmt.Sprintf("select user_id, sum(income) as income from income_daily_r "+
 		"where  time>='%s' and time<='%s' and user_id='%s' group by user_id;", DateFrom, DateTo, userId)
-	datas, err := com.GetSQLHelper().GetQueryDataList(sqlClause)
+	dataBase, err := com.GetSQLHelper().GetQueryDataList(sqlClause)
 	if err != nil {
 		log.Error(err.Error())
 		return
 	}
-	for _, data := range datas {
+	for _, data := range dataBase {
 		var InPage IncomeOfDaily
 		InPage.Time, _ = time.Parse(TimeFormatYMD, data["date"])
 		InPage.DiskUsage = Str2Float64(data["disk_usage"])
@@ -502,7 +443,6 @@ func QueryDataByDate(DeviceId, DateFrom, DateTo string) map[string]string {
 		sqlClause = fmt.Sprintf("select sum(income) as income,online_time from income_daily_r "+
 			"where device_id='%s' group by user_id;", DeviceId)
 	}
-	//fmt.Println(sqlClause)
 	data, err := com.GetSQLHelper().GetQueryDataList(sqlClause)
 	if err != nil {
 		log.Error(err.Error())
@@ -535,13 +475,10 @@ func (t *DeviceTask) Initial() {
 	t.RunInterval = int64(gConfig["run_interval"].(float64))
 	t.DeviceIdAndUserId = make(map[string]string)
 	t.getDeviceIds()
-	//data, _ := CidInfoGetFromRpc(t.DeviceIds[0])
-	//fmt.Println(data)
 	today := time.Now().Format(TimeFormatYMD)
 	GUpdateTagNew = today
 	GUpdate = false
 	GUpdateTask = false
-	//t.DeviceIds = append(t.DeviceIds, "e_9453993051df11edb9d0902e1671f843")
 }
 
 func (t *DeviceTask) getDeviceIds() {
@@ -557,8 +494,6 @@ func (t *DeviceTask) getDeviceIds() {
 			t.DeviceIdAndUserId[deviceId.DeviceId] = deviceId.UserId
 		}
 	}
-
-	//t.DeviceIds = append(t.DeviceIds, "e_9453993051df11edb9d0902e1671f843")
 	return
 }
 
@@ -573,9 +508,8 @@ func (t *DeviceTask) itemRun() {
 		default:
 		}
 
-		//nowHour := time.Now().Hour()
 		nowMin := time.Now().Minute()
-		if nowMin == 00 || nowMin == 10 || nowMin == 20 || nowMin == 30 || nowMin == 40 || nowMin == 45 {
+		if nowMin%10 == 0 {
 			GTime = time.Now()
 			GUpdate = true
 		}
@@ -609,8 +543,6 @@ func (t *DeviceTask) itemRun() {
 
 		}
 		GUpdate = false
-
-		//log.Debug("device Run once loop end")
 		<-ticker
 	}
 }

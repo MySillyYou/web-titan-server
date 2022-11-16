@@ -1,17 +1,18 @@
 package handler
 
 import (
-	log "web-server/alog"
-	mql "web-server/mysql"
-	red "web-server/redis"
-	"web-server/sms"
 	"fmt"
+	"github.com/gorilla/sessions"
 	"math/rand"
 	"net/http"
 	"strings"
 	"time"
-	"github.com/gorilla/sessions"
+	log "web-server/alog"
+	mql "web-server/mysql"
+	red "web-server/redis"
+	"web-server/sms"
 )
+
 //const KMaxAge = 86400
 
 var store = sessions.NewCookieStore([]byte("user_info"))
@@ -47,96 +48,8 @@ func RegisterInterface() {
 	//RegisterAuthHandler("/modify_pwd", ModifyPwd)
 }
 
-//func FlashTTL(r *http.Request, w http.ResponseWriter) error {
-//
-//	session, err := store.Get(r, "user_info")
-//	if err != nil {
-//		return err
-//	}
-//	// 删除session，并重新生成
-//	store.Clear(r)
-//	newSession, err := store.Get(r, "user_info")
-//	if err != nil {
-//		return err
-//	}
-//	newSession.Values = session.Values
-//	store.Save(r, w, newSession)
-//	return nil
-//}
-
-//func CheckUserHandler(h http.Handler) http.Handler {
-//	return http.HandlerFunc(
-//		func(w http.ResponseWriter, r *http.Request) {
-//
-//			defer func() {
-//				if e, ok := recover().(error); ok {
-//					HandleError(w, "服务异常")
-//					log.Error(e.Error())
-//				}
-//			}()
-//
-//			r.FormValue("")
-//			path := r.URL.Path
-//			if gConfig["is_login"].(bool) {
-//				r.Form["operator"] = []string{"test"}
-//				h.ServeHTTP(w, r)
-//				return
-//			}
-//
-//			session, err := store.Get(r, "user_info")
-//			if err != nil {
-//				log.Error("user_info not exist")
-//				HandleAuthError(w)
-//				return
-//			}
-//
-//			session2FormValue := func(ssKey string) bool {
-//				var (
-//					ok      bool
-//					ssValue interface{}
-//				)
-//				if ssValue, ok = session.Values[ssKey]; !ok {
-//					log.Errorf("%s not exist", ssKey)
-//					return false
-//				}
-//				r.Form[ssKey] = []string{ssValue.(string)}
-//				return true
-//			}
-//
-//			if !session2FormValue("operator") {
-//				HandleAuthError(w)
-//				return
-//			}
-//			if !session2FormValue("role") {
-//				HandleAuthError(w)
-//				return
-//			}
-//			if !session2FormValue("channels") {
-//				HandleAuthError(w)
-//				return
-//			}
-//			if !session2FormValue("menus") {
-//				HandleAuthError(w)
-//				return
-//			}
-//
-//			// 刷新过期时间
-//			FlashTTL(r, w)
-//
-//			//			log.Debug("role", r.Form["role"], r.Form["operator"])
-//
-//			pathAuth := checkPathAuth(r.FormValue("menus"), path)
-//			if !pathAuth {
-//				HandleAuthError(w)
-//				return
-//			}
-//
-//			h.ServeHTTP(w, r)
-//		})
-//}
-
 /*
-	检测path路径的权限
+检测path路径的权限
 */
 func checkPathAuth(menus string, path string) bool {
 	tempAuth, ok := gAuthMenu["auth_menus"].(map[string]interface{})
@@ -195,7 +108,7 @@ func getRoleMenus(role string) string {
 	return auth
 }
 
-// 登录
+// Login 登录
 func Login(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	//password := r.FormValue("password")
@@ -282,7 +195,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	// 记录最后登录时间
 	sqlClause = fmt.Sprintf("update operators set login_time=now() where operator='%s'", username)
-	_, err =mql.GetSQLHelper().ExecSqlClause(sqlClause)
+	_, err = mql.GetSQLHelper().ExecSqlClause(sqlClause)
 	if err != nil {
 		log.Error(err.Error())
 		HandleError(w, err.Error())
@@ -320,7 +233,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	HandleSuccess(w, "")
 }
 
-// 修改密码
+// ModifyPwd 修改密码
 func ModifyPwd(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	oldPWD := r.FormValue("old_pwd")
@@ -369,7 +282,7 @@ func ModifyPwd(w http.ResponseWriter, r *http.Request) {
 //	http.Handle(pattern, CheckUserHandler(http.HandlerFunc(f)))
 //}
 
-// 获取登录验证码
+// GetLoginVerifyCode 获取登录验证码
 func GetLoginVerifyCode(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	if username == "" {
@@ -426,7 +339,7 @@ func GetLoginVerifyCode(w http.ResponseWriter, r *http.Request) {
 	HandleSuccess(w, "")
 }
 
-//检测验证码
+// CheckVerifyCode 检测验证码
 func CheckVerifyCode(mobile, code string) bool {
 
 	redisKey := "verify_Code" + mobile
